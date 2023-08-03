@@ -14,6 +14,10 @@
 		FA22CEFF2A7A304C00178629 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA22CEFE2A7A304C00178629 /* Assets.xcassets */; };
 		FA22CF022A7A304C00178629 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA22CF002A7A304C00178629 /* LaunchScreen.storyboard */; };
 		FA22CF052A7A304C00178629 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FA22CF042A7A304C00178629 /* main.m */; };
+		FA22CF0E2A7A307E00178629 /* LaunchOrganizer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA22CF0D2A7A307E00178629 /* LaunchOrganizer.m */; };
+		FA22CF172A7B484E00178629 /* LOCrashMonitor_mach.c in Sources */ = {isa = PBXBuildFile; fileRef = FA22CF162A7B484E00178629 /* LOCrashMonitor_mach.c */; };
+		FA22CF1A2A7B5AA000178629 /* LOCrashMonitor_signal.c in Sources */ = {isa = PBXBuildFile; fileRef = FA22CF192A7B5AA000178629 /* LOCrashMonitor_signal.c */; };
+		FA22CF1D2A7B812A00178629 /* LOCrashMonitor.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA22CF1C2A7B812A00178629 /* LOCrashMonitor.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +33,14 @@
 		FA22CF012A7A304C00178629 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA22CF032A7A304C00178629 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA22CF042A7A304C00178629 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FA22CF0C2A7A307E00178629 /* LaunchOrganizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchOrganizer.h; sourceTree = "<group>"; };
+		FA22CF0D2A7A307E00178629 /* LaunchOrganizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaunchOrganizer.m; sourceTree = "<group>"; };
+		FA22CF152A7B484E00178629 /* LOCrashMonitor_mach.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOCrashMonitor_mach.h; sourceTree = "<group>"; };
+		FA22CF162A7B484E00178629 /* LOCrashMonitor_mach.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LOCrashMonitor_mach.c; sourceTree = "<group>"; };
+		FA22CF182A7B5AA000178629 /* LOCrashMonitor_signal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOCrashMonitor_signal.h; sourceTree = "<group>"; };
+		FA22CF192A7B5AA000178629 /* LOCrashMonitor_signal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LOCrashMonitor_signal.c; sourceTree = "<group>"; };
+		FA22CF1B2A7B812A00178629 /* LOCrashMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOCrashMonitor.h; sourceTree = "<group>"; };
+		FA22CF1C2A7B812A00178629 /* LOCrashMonitor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LOCrashMonitor.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,11 +79,27 @@
 				FA22CEF62A7A304A00178629 /* SceneDelegate.m */,
 				FA22CEF82A7A304A00178629 /* ViewController.h */,
 				FA22CEF92A7A304A00178629 /* ViewController.m */,
+				FA22CF0B2A7A306100178629 /* LaunchOrganizer */,
 				FA22CEFB2A7A304A00178629 /* Main.storyboard */,
 				FA22CEFE2A7A304C00178629 /* Assets.xcassets */,
 				FA22CF002A7A304C00178629 /* LaunchScreen.storyboard */,
 				FA22CF032A7A304C00178629 /* Info.plist */,
 				FA22CF042A7A304C00178629 /* main.m */,
+			);
+			path = LaunchOrganizer;
+			sourceTree = "<group>";
+		};
+		FA22CF0B2A7A306100178629 /* LaunchOrganizer */ = {
+			isa = PBXGroup;
+			children = (
+				FA22CF0C2A7A307E00178629 /* LaunchOrganizer.h */,
+				FA22CF0D2A7A307E00178629 /* LaunchOrganizer.m */,
+				FA22CF1B2A7B812A00178629 /* LOCrashMonitor.h */,
+				FA22CF1C2A7B812A00178629 /* LOCrashMonitor.mm */,
+				FA22CF152A7B484E00178629 /* LOCrashMonitor_mach.h */,
+				FA22CF162A7B484E00178629 /* LOCrashMonitor_mach.c */,
+				FA22CF182A7B5AA000178629 /* LOCrashMonitor_signal.h */,
+				FA22CF192A7B5AA000178629 /* LOCrashMonitor_signal.c */,
 			);
 			path = LaunchOrganizer;
 			sourceTree = "<group>";
@@ -147,7 +175,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA22CEFA2A7A304A00178629 /* ViewController.m in Sources */,
+				FA22CF1A2A7B5AA000178629 /* LOCrashMonitor_signal.c in Sources */,
+				FA22CF0E2A7A307E00178629 /* LaunchOrganizer.m in Sources */,
 				FA22CEF42A7A304A00178629 /* AppDelegate.m in Sources */,
+				FA22CF1D2A7B812A00178629 /* LOCrashMonitor.mm in Sources */,
+				FA22CF172A7B484E00178629 /* LOCrashMonitor_mach.c in Sources */,
 				FA22CF052A7A304C00178629 /* main.m in Sources */,
 				FA22CEF72A7A304A00178629 /* SceneDelegate.m in Sources */,
 			);

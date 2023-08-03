@@ -6,6 +6,7 @@
 //
 
 #import "AppDelegate.h"
+#import "LaunchOrganizer.h"
 
 @interface AppDelegate ()
 
@@ -16,6 +17,22 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [LaunchOrganizer finishingLaunching:^BOOL(NSInteger count) {
+        return count > 1;
+    } launchAction:^{
+        NSLog(@" 正常启动任务 ");
+    } protectAction:^{
+        NSLog(@" 启动保护任务 ");
+    }];
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        // 启动任务完成，认为启动任务没有异常
+        // 这个时间最好是配置及修复脚本能拉下来的时间，优先保证正常的修复手段能够起作用，不宜过长也不宜过短
+        [LaunchOrganizer launchingFinished];
+    });
+    
     return YES;
 }
 
