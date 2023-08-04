@@ -8,9 +8,19 @@
 #ifndef LOCrashMonitor_signal_h
 #define LOCrashMonitor_signal_h
 
-#include <stdio.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-static bool lo_installSignalHandler(void);
+#include <stdio.h>
+#include <stdbool.h>
+
+bool lo_installSignalHandler(void);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* LOCrashMonitor_signal_h */

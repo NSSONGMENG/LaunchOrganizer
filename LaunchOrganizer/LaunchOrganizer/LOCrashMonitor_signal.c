@@ -12,17 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-
-
-// ============================================================================
-#pragma mark - Globals -
-// ============================================================================
-
-//static volatile bool g_isEnabled = false;
-
-//static KSCrash_MonitorContext g_monitorContext;
-//static KSStackCursor g_stackCursor;
 
 
 /** Our custom signal stack. The signal handler will use this as its stack. */
@@ -30,8 +19,6 @@ static stack_t lo_signalStack = {0};
 
 /** Signal handlers that were installed before we installed ours. */
 static struct sigaction* lo_previousSignalHandlers = NULL;
-
-static char g_eventID[37];
 
 static const int lo_fatalSignals[] =
 {
@@ -61,50 +48,31 @@ static const int lo_fatalSignals[] =
  *
  * @param userContext Other contextual information.
  */
-static void handleSignal(int sigNum, siginfo_t* signalInfo, void* userContext)
+static void lo_handleSignal(int sigNum, siginfo_t* signalInfo, void* userContext)
 {
-//    if(g_isEnabled)
-//    {
-//        thread_act_array_t threads = NULL;
-//        mach_msg_type_number_t numThreads = 0;
-//        ksmc_suspendEnvironment(&threads, &numThreads);
-//        kscm_notifyFatalExceptionCaptured(false);
-//
-//        KSLOG_DEBUG("Filling out context.");
-//        KSMC_NEW_CONTEXT(machineContext);
-//        ksmc_getContextForSignal(userContext, machineContext);
-//        kssc_initWithMachineContext(&g_stackCursor, KSSC_MAX_STACK_DEPTH, machineContext);
-//
-//        KSCrash_MonitorContext* crashContext = &g_monitorContext;
-//        memset(crashContext, 0, sizeof(*crashContext));
-//        crashContext->crashType = KSCrashMonitorTypeSignal;
-//        crashContext->eventID = g_eventID;
-//        crashContext->offendingMachineContext = machineContext;
-//        crashContext->registersAreValid = true;
-//        crashContext->faultAddress = (uintptr_t)signalInfo->si_addr;
-//        crashContext->signal.userContext = userContext;
-//        crashContext->signal.signum = signalInfo->si_signo;
-//        crashContext->signal.sigcode = signalInfo->si_code;
-//        crashContext->stackCursor = &g_stackCursor;
-//
-//        kscm_handleException(crashContext);
-//        ksmc_resumeEnvironment(threads, numThreads);
-//    }
-//
-//    KSLOG_DEBUG("Re-raising signal for regular handlers to catch.");
-    
     // TODO: 向上层报告错误
-    lo_handleException();
+    lo_handleException("signal");
     
-    raise(sigNum);
+    // 转发
+    const int* fatalSignals = lo_fatalSignals;
+    int fatalSignalsCount = (sizeof(lo_fatalSignals) / sizeof(lo_fatalSignals[0]));
+    
+    for (int i = 0; i < fatalSignalsCount; i++) {
+        if (fatalSignals[i] == sigNum) {
+            // Try to reverse the damage
+            struct sigaction *s = &lo_previousSignalHandlers[i];
+            if (s) {
+                if (s->sa_sigaction) {
+                    s->sa_sigaction(sigNum, signalInfo, userContext);
+                } else if (s->sa_handler) {
+                    s->sa_handler(sigNum);
+                }
+            }
+        }
+    }
 }
 
-
-// ============================================================================
-#pragma mark - API -
-// ============================================================================
-
-static bool lo_installSignalHandler(void)
+bool lo_installSignalHandler(void)
 {
     if (lo_signalStack.ss_size == 0) {
         lo_signalStack.ss_size = SIGSTKSZ;
@@ -116,7 +84,7 @@ static bool lo_installSignalHandler(void)
     }
 
     const int* fatalSignals = lo_fatalSignals;
-    int fatalSignalsCount = sizeof(fatalSignals) / sizeof(int*);
+    int fatalSignalsCount = (sizeof(lo_fatalSignals) / sizeof(lo_fatalSignals[0]));
 
     if (lo_previousSignalHandlers == NULL) {
         lo_previousSignalHandlers = malloc(sizeof(*lo_previousSignalHandlers) * (unsigned)fatalSignalsCount);
@@ -128,7 +96,7 @@ static bool lo_installSignalHandler(void)
     action.sa_flags |= SA_64REGSET;
 #endif
     sigemptyset(&action.sa_mask);
-    action.sa_sigaction = &handleSignal;
+    action.sa_sigaction = &lo_handleSignal;
 
     for (int i = 0; i < fatalSignalsCount; i++) {
         if (sigaction(fatalSignals[i], &action, &lo_previousSignalHandlers[i]) != 0) {
@@ -149,7 +117,7 @@ failed:
 //static void uninstallSignalHandler(void)
 //{
 //    const int* fatalSignals = lo_fatalSignals;
-//    int fatalSignalsCount = sizeof(fatalSignals) / sizeof(int*);
+//    int fatalSignalsCount = (sizeof(lo_fatalSignals) / sizeof(lo_fatalSignals[0]));
 //
 //    for (int i = 0; i < fatalSignalsCount; i++) {
 //        sigaction(fatalSignals[i], &lo_previousSignalHandlers[i], NULL);

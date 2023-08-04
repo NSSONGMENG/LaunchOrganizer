@@ -11,6 +11,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-static bool lo_installExceptionHandler(void);
+bool lo_installExceptionHandler(void);
 
 #endif /* LOCrashMonitor_mach_h */

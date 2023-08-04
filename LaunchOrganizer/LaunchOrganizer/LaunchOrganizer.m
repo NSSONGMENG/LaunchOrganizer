@@ -6,7 +6,6 @@
 //
 
 #import "LaunchOrganizer.h"
-#import "LOCrashOrganizer.h"
 #include "LOCrashMonitor.h"
 
 #pragma mark - crash -
@@ -61,6 +60,8 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance = [LaunchOrganizer new];
+        instance.actionMap = [NSMutableDictionary dictionary];
+        instance.protectMap = [NSMutableDictionary dictionary];
     });
     return instance;
 }
@@ -115,17 +116,17 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
     NSParameterAssert([key isKindOfClass:[NSString class]] && key.length > 0);
     
     if ([key isKindOfClass:[NSString class]]) {
-        dispatch_block_t action = [self shared].actionMap[key];
+        LaunchOrganizer *orgnizer = [LaunchOrganizer shared];
+        dispatch_block_t action = orgnizer.actionMap[key];
         if (action) action();
     }
 }
 
 + (void)launchingFinished {
-    NSAssert(![self shared].isProtecting, @"【LaunchOrganizer error】保护期间不允许调用该方法，请在正常启动任务完成后调用");
-    NSAssert([NSThread isMainThread], @"【LaunchOrganizer error】确保在主线程调用launchingFinished()");
-    
     LaunchOrganizer *orgnizer = [LaunchOrganizer shared];
-    
+    NSAssert(!orgnizer.isProtecting, @"【LaunchOrganizer error】保护期间不允许调用该方法，请在正常启动任务完成后调用");
+    NSAssert([NSThread isMainThread], @"【LaunchOrganizer error】确保在主线程调用launchingFinished()");
+        
     if (!orgnizer.isProtecting) {
         [self resetCrashCount];         // 重置crash count
         orgnizer.launchFinished = YES;
@@ -152,9 +153,23 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
     }
 }
 
-+ (void)handleException {
-    if (![self shared].launchFinished) {
-        [self increaseCrashCount];
+//static int crashIndex = 0;
++ (void)handleException:(char *)type {
+    LaunchOrganizer *orgnizer = [LaunchOrganizer shared];
+    
+    if (type == NULL) {
+        type = "null";
+    }
+    
+//    crashIndex ++;
+//    NSString *key = [NSString stringWithFormat:@"crash_index_%d", crashIndex];
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:type] forKey:key];
+    
+    if (!orgnizer.launchFinished) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            [self increaseCrashCount];
+        });
     }
 }
 

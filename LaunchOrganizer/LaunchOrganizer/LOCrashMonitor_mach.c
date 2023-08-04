@@ -16,8 +16,8 @@
 #pragma mark - Constants -
 // ============================================================================
 
-static const char* kThreadPrimary = "KSCrash Exception Handler (Primary)";
-static const char* kThreadSecondary = "KSCrash Exception Handler (Secondary)";
+static const char* kThreadPrimary = "LOCrash Exception Handler (Primary)";
+static const char* kThreadSecondary = "LOCrash Exception Handler (Secondary)";
 
 #if __LP64__
     #define MACH_ERROR_CODE_MASK 0xFFFFFFFFFFFFFFFF
@@ -126,7 +126,7 @@ thread_t lothread_self(void) {
 
 /** Restore the original mach exception ports.
  */
-static void restoreExceptionPorts(void)
+static void lo_restoreExceptionPorts(void)
 {
     if (lo_previousExceptionPorts.count == 0) {
         return;
@@ -159,8 +159,11 @@ static void restoreExceptionPorts(void)
  * Wait for an exception message, uninstall our exception port, record the
  * exception information, and write a report.
  */
-static void* handleExceptions(void* const userData)
+static void* lo_handleExceptions(void* const userData)
 {
+    // TODO: 向上层报告错误
+    lo_handleException("mach");
+
     LOMachExceptionMessage exceptionMessage = {{0}};
     LOMachReplyMessage replyMessage = {{0}};
 
@@ -181,9 +184,6 @@ static void* handleExceptions(void* const userData)
     replyMessage.header = exceptionMessage.header;
     replyMessage.NDR = exceptionMessage.NDR;
     replyMessage.returnCode = KERN_FAILURE;
-    
-    // TODO: 向上层报告错误
-    lo_handleException();
 
     mach_msg(&replyMessage.header,
              MACH_SEND_MSG,
@@ -201,12 +201,12 @@ static void* handleExceptions(void* const userData)
 #pragma mark - API -
 // ============================================================================
 
-static void uninstallExceptionHandler(void)
+static void lo_uninstallExceptionHandler(void)
 {
     // NOTE: Do not deallocate the exception port. If a secondary crash occurs
     // it will hang the process.
     
-    restoreExceptionPorts();
+    lo_restoreExceptionPorts();
     
     thread_t thread_self = lothread_self();
     
@@ -225,7 +225,7 @@ static void uninstallExceptionHandler(void)
     lo_exceptionPort = MACH_PORT_NULL;
 }
 
-static bool lo_installExceptionHandler(void)
+bool lo_installExceptionHandler(void)
 {
     bool attributes_created = false;
     pthread_attr_t attr;
@@ -282,7 +282,7 @@ static bool lo_installExceptionHandler(void)
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     error = pthread_create(&lo_secondaryPThread,
                            &attr,
-                           &handleExceptions,
+                           &lo_handleExceptions,
                            (void*)kThreadSecondary);
     if (error != 0) {
         goto failed;
@@ -292,7 +292,7 @@ static bool lo_installExceptionHandler(void)
 
     error = pthread_create(&lo_primaryPThread,
                            &attr,
-                           &handleExceptions,
+                           &lo_handleExceptions,
                            (void*)kThreadPrimary);
     if (error != 0) {
         goto failed;
@@ -308,7 +308,7 @@ failed:
     if (attributes_created) {
         pthread_attr_destroy(&attr);
     }
-    uninstallExceptionHandler();
+    lo_uninstallExceptionHandler();
     return false;
 }
 

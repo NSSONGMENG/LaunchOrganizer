@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)protectFinish;
 
 /// 捕获到异常。如有crash组件可通过该方法设置
-+ (void)handleException;
++ (void)handleException:(char *)type;
 
 @end
 

@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-void lo_handleException(void);
+void lo_handleException(char *type);
 
 void lo_installExceptionMonitor(void);
 

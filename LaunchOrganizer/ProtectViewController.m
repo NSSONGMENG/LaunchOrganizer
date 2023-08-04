@@ -1,30 +1,29 @@
 //
-//  ViewController.m
+//  ProtectViewController.m
 //  LaunchOrganizer
 //
-//  Created by song.meng on 2023/8/2.
+//  Created by song.meng on 2023/8/4.
 //
 
-#import "ViewController.h"
+#import "ProtectViewController.h"
+#import "LaunchOrganizer.h"
 
-@interface ViewController ()
+@interface ProtectViewController ()
 
 @end
 
-@implementation ViewController
+@implementation ProtectViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    UILabel *labe = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 300, 30)];
+    UILabel *labe = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, self.view.frame.size.width - 20, 30)];
     labe.font = [UIFont systemFontOfSize:15];
     labe.textColor = [UIColor redColor];
-    labe.text = @"正常启动";
+    labe.textAlignment = NSTextAlignmentCenter;
+    labe.text = self.title;
     [self.view addSubview:labe];
-        
-    self.view.backgroundColor = [UIColor whiteColor];
-    
     
     
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(100, 400, 200, 30)];
@@ -37,11 +36,11 @@
     
     
     UIButton *btn1 = [[UIButton alloc] initWithFrame:CGRectMake(100, 450, 200, 30)];
-    [btn1 setTitle:@"array[100]" forState:UIControlStateNormal];
+    [btn1 setTitle:@"protect finish" forState:UIControlStateNormal];
     [btn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [btn1 setBackgroundColor:[UIColor yellowColor]];
     btn1.layer.cornerRadius = 5;
-    [btn1 addTarget:self action:@selector(outOfSize) forControlEvents:UIControlEventTouchUpInside];
+    [btn1 addTarget:self action:@selector(finishAciton) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn1];
 }
 
@@ -49,8 +48,8 @@
     abort();
 }
 
-- (void)outOfSize {
-    @[][1];
+- (void)finishAciton {
+    [LaunchOrganizer protectFinish];
 }
 
 @end
