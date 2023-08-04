@@ -43,14 +43,12 @@
         });
     } protectAction:^{
         NSLog(@" 启动保护任务 ");
+        
         ProtectViewController * vc = [ProtectViewController new];
         vc.title = text;
         self->_window.rootViewController = vc;
         
-
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [LaunchOrganizer protectFinish];
-//        });
+//        [LaunchOrganizer protectFinish];  // 保护操作完成
     }];
     
     [_window makeKeyAndVisible];
@@ -58,5 +56,21 @@
     return YES;
 }
 
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    [LaunchOrganizer addLifeActionWithKey:@"applicationDidBecomeActive" action:^{
+        // 正常的声明周期任务
+    } protectAction:^{
+        // 受保护状态下需要执行的特殊任务，可以为nil
+    }];
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    [LaunchOrganizer addLifeActionWithKey:@"applicationWillEnterForeground" action:^{
+        // 正常的声明周期任务
+    } protectAction:^{
+        // 受保护状态下需要执行的特殊任务，可以为nil
+    }];
+}
 
 @end
