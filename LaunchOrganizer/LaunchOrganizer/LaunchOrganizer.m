@@ -75,6 +75,15 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
     
     if (!crashBlock || !l_action || !p_action) return;
     
+    // 若App版本发生变化，则清除crash记录
+    NSString *buildV = [[NSUserDefaults standardUserDefaults] stringForKey:@"privious_build_version"];
+    NSString *curV = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
+
+    if (buildV != curV) {
+        [[NSUserDefaults standardUserDefaults] setObject:curV forKey:@"privious_build_version"];
+        [self resetCrashCount];
+    }
+    
     LaunchOrganizer *orgnizer = [LaunchOrganizer shared];
     
     lo_installExceptionMonitor();
