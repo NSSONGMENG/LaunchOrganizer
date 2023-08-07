@@ -49,6 +49,7 @@
         self->_window.rootViewController = vc;
         
 //        [LaunchOrganizer protectFinish];  // 保护操作完成
+//        [LaunchOrganizer doActionWithKey:@"applicationDidEnterBackground"];
     }];
     
     [_window makeKeyAndVisible];
@@ -59,15 +60,15 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [LaunchOrganizer addLifeActionWithKey:@"applicationDidBecomeActive" action:^{
-        // 正常的声明周期任务
+        // 正常的生命周期任务
     } protectAction:^{
         // 受保护状态下需要执行的特殊任务，可以为nil
     }];
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    [LaunchOrganizer addLifeActionWithKey:@"applicationWillEnterForeground" action:^{
-        // 正常的声明周期任务
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    [LaunchOrganizer addLifeActionWithKey:@"applicationDidEnterBackground" action:^{
+        // 正常的生命周期任务
     } protectAction:^{
         // 受保护状态下需要执行的特殊任务，可以为nil
     }];
