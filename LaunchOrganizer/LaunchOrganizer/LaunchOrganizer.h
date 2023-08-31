@@ -50,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)protectFinish;
 
 /// 捕获到异常。如有crash组件可通过该方法设置
+/// 若通过crash组件设置，移除crash monitor等文件和相关的监听设置即可
 + (void)handleException:(char *)type;
 
 @end
