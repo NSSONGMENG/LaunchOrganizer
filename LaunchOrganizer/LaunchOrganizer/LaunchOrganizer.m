@@ -123,11 +123,16 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
 
 + (void)doActionWithKey:(NSString *)key {
     NSParameterAssert([key isKindOfClass:[NSString class]] && key.length > 0);
+    NSAssert([NSThread isMainThread], @"【LaunchOrganizer error】确保在主线程调用doActionWithKey()");
     
     if ([key isKindOfClass:[NSString class]]) {
         LaunchOrganizer *orgnizer = [LaunchOrganizer shared];
         dispatch_block_t action = orgnizer.actionMap[key];
-        if (action) action();
+        
+        if (action) {
+            action();
+            orgnizer.actionMap[key] = nil;  // 避免引起内存泄漏
+        }
     }
 }
 
