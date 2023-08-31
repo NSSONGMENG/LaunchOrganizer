@@ -130,8 +130,11 @@ static NSString * didFinishLaunchingKey = @"didFinishLaunchingWithOptions";
         dispatch_block_t action = orgnizer.actionMap[key];
         
         if (action) {
-            action();
-            orgnizer.actionMap[key] = nil;  // 避免引起内存泄漏
+            if ([NSThread isMainThread]) {
+                action();
+            } else {
+                dispatch_async(dispatch_get_main_queue(), action);
+            }
         }
     }
 }
