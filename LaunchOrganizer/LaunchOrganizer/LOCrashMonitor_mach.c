@@ -161,9 +161,6 @@ static void lo_restoreExceptionPorts(void)
  */
 static void* lo_handleExceptions(void* const userData)
 {
-    // TODO: 向上层报告错误
-    lo_handleException("mach");
-
     LOMachExceptionMessage exceptionMessage = {{0}};
     LOMachReplyMessage replyMessage = {{0}};
 
@@ -177,6 +174,8 @@ static void* lo_handleExceptions(void* const userData)
                                     MACH_MSG_TIMEOUT_NONE,
                                     MACH_PORT_NULL);
         if (kr == KERN_SUCCESS) {
+            // TODO: 向上层报告错误
+            lo_handleException("mach");
             break;
         }
     }
